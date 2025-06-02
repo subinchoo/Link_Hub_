@@ -17,6 +17,13 @@ namespace LinkHub.Areas.Identity.Pages.Account
             _logger = logger;
         }
 
+        public async Task<IActionResult> OnGet()
+        {
+            await _signInManager.SignOutAsync();
+            _logger.LogInformation("User logged out (GET).");
+            return Redirect("/Identity/Account/Login");
+        }
+
         public async Task<IActionResult> OnPost(string returnUrl = null)
         {
             await _signInManager.SignOutAsync();
@@ -27,7 +34,7 @@ namespace LinkHub.Areas.Identity.Pages.Account
                 return LocalRedirect(returnUrl);
             }
 
-            return RedirectToPage("/Identity/Account/Login");
+            return Redirect("/Identity/Account/Login");
         }
     }
 }
