@@ -1,0 +1,49 @@
+@*Search and filter engine*@
+<div class="d-flex gap-2 mt-4">
+    <input class="form-control" placeholder="Search title" @bind="SearchKeyword" />
+    
+    <select class="form-select" @bind="FilterCategory">
+        <option>All</option>
+        @foreach (var cat in Categories)
+        {
+            <option>@cat</option>
+        }
+    </select>
+</div>
+
+@code {
+    private string _searchKeyword;
+    [Parameter]
+    public string SearchKeyword
+    {
+        get => _searchKeyword;
+        set
+        {
+            if (_searchKeyword != value)
+            {
+                _searchKeyword = value;
+                SearchKeywordChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+    private string _filterCategory;
+    [Parameter]
+    public string FilterCategory
+    {
+        get => _filterCategory;
+        set
+        {
+            if (_filterCategory != value)
+            {
+                _filterCategory = value;
+                FilterCategoryChanged.InvokeAsync(value);
+            }
+        }
+    }
+
+    [Parameter] public EventCallback<string> SearchKeywordChanged { get; set; }
+    [Parameter] public EventCallback<string> FilterCategoryChanged { get; set; }
+
+    [Parameter] public List<string> Categories { get; set; } = new();
+}

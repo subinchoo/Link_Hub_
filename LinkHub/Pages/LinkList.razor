@@ -1,0 +1,46 @@
+@* Show filtered link *@
+@using LinkHubApp.Models
+
+@foreach (var cat in Categories)
+{
+    if (FilterCategory != "All" && cat != FilterCategory)
+    {
+        continue;
+    }
+
+    var filtered = Links
+        .Where(l => l.Category == cat &&
+                    l.UserId == CurrentUserId &&
+                    (string.IsNullOrWhiteSpace(SearchKeyword) || l.Title.Contains(SearchKeyword, StringComparison.OrdinalIgnoreCase)))
+        .ToList();
+
+    if (filtered.Any())
+    {
+        <h5 class="mt-4">@cat</h5>
+        <ul class="list-group">
+            @foreach (var link in filtered)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="@link.Url" target="_blank">@link.Title</a>
+                    <button class="btn btn-sm btn-danger" @onclick="() => OnDelete.InvokeAsync(link)">Delete</button>
+                </li>
+
+                
+            }
+          
+        </ul>
+    }
+
+}
+
+@code {
+  
+    [Parameter] public List<LinkItem> Links { get; set; } = new();
+    [Parameter] public List<string> Categories { get; set; } = new();
+    [Parameter] public string SearchKeyword { get; set; } = "";
+    [Parameter] public string FilterCategory { get; set; } = "All";
+
+    [Parameter] public string CurrentUserId { get; set; } = "";
+
+    [Parameter] public EventCallback<LinkItem> OnDelete { get; set; }
+}
