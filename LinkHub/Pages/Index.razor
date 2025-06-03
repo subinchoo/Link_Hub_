@@ -2,16 +2,19 @@
 @using LinkHubApp.Models
 @inject AuthenticationStateProvider AuthStateProvider
 
-
-
+<!--
+    Glance Bookmark main page
+    - Add bookmarks, add categories, search/filter, and display link list
+-->
 
 <h3>Glance Bookmark</h3>
 
-<!-- 입력 폼 -->
+<!-- Input form: Add a new bookmark -->
 <div class="mb-3">
     <input placeholder="Title" class="form-control" @bind="newTitle" />
     <input placeholder="Link(URL)" class="form-control mt-2" @bind="newUrl" />
 
+    <!-- Category dropdown -->
     <select class="form-select mt-2" @bind="selectedCategory">
         @foreach (var cat in categories)
         {
@@ -22,19 +25,19 @@
     <button class="btn btn-primary mt-2" @onclick="AddLink">Add</button>
 </div>
 
-<!-- 새 카테고리 추가 -->
+<!-- Add new category form -->
 <div class="mt-3">
     <input class="form-control" placeholder="Add Category" @bind="newCategory" />
     <button class="btn btn-secondary mt-1" @onclick="AddCategory">Add Category</button>
 </div>
 
-<!-- 검색/필터 컴포넌트 -->
+<!-- Search/filter component: filter by keyword and category -->
 <SearchAndFilter 
     @bind-SearchKeyword="searchKeyword" 
     @bind-FilterCategory="filterCategory"
     Categories="categories" />
 
-<!-- 링크 리스트 컴포넌트 -->
+<!-- Link list component: shows filtered bookmarks -->
 <LinkList 
     Links="links" 
     Categories="categories" 
@@ -44,38 +47,41 @@
     OnDelete=@(link => RemoveLink(link)) />
 
 @code {
+    // List of all bookmarks
     List<LinkItem> links = new();
 
+    // Input form binding variables
     string newTitle = "";
     string newUrl = "";
     string selectedCategory = "Development";
     string newCategory = "";
 
+    // Search/filter variables
     string searchKeyword = "";
     string filterCategory = "All";
 
+    // Current logged-in user ID
     string currentUserId = "anonymous";
 
-protected override async Task OnInitializedAsync()
-{
-    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-    var user = authState.User;
-
-    if (user.Identity != null && user.Identity.IsAuthenticated)
+    // On page initialization: get logged-in user info
+    protected override async Task OnInitializedAsync()
     {
-        currentUserId = user.Identity.Name;
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            currentUserId = user.Identity.Name;
+        }
     }
-}
 
-
+    // Initial category list
     List<string> categories = new() { "Development", "Design", "General", "IT School", "Recruitment", "Other" };
 
-
-    
-
+    // Add a new bookmark
     void AddLink()
     {
-            Console.WriteLine($"🔽 AddLink() called by: {currentUserId}");
+        Console.WriteLine($"🔽 AddLink() called by: {currentUserId}");
 
         if (!string.IsNullOrWhiteSpace(newTitle) && !string.IsNullOrWhiteSpace(newUrl))
         {
@@ -83,7 +89,7 @@ protected override async Task OnInitializedAsync()
             Category = selectedCategory,
             UserId = currentUserId });
 
-            //reset input fields
+            // Reset input fields
             newTitle = "";
             newUrl = "";
 
@@ -91,6 +97,7 @@ protected override async Task OnInitializedAsync()
         }
     }
 
+    // Add a new category
     void AddCategory()
     {
         if (!string.IsNullOrWhiteSpace(newCategory) && !categories.Contains(newCategory))
@@ -100,6 +107,7 @@ protected override async Task OnInitializedAsync()
         }
     }
 
+    // Remove a bookmark
     void RemoveLink(LinkItem link)
     {
         links.Remove(link);

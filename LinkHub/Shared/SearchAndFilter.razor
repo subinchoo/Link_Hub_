@@ -1,7 +1,9 @@
-@*Search and filter engine*@
+@* Search and filter engine component *@
 <div class="d-flex gap-2 mt-4">
+    <!-- Input for searching by title -->
     <input class="form-control" placeholder="Search title" @bind="SearchKeyword" />
     
+    <!-- Dropdown for filtering by category -->
     <select class="form-select" @bind="FilterCategory">
         <option>All</option>
         @foreach (var cat in Categories)
@@ -12,7 +14,10 @@
 </div>
 
 @code {
+    // Backing field for search keyword
     private string _searchKeyword;
+
+    // Search keyword property with two-way binding and change notification
     [Parameter]
     public string SearchKeyword
     {
@@ -22,12 +27,16 @@
             if (_searchKeyword != value)
             {
                 _searchKeyword = value;
+                // Notify parent component when search keyword changes
                 SearchKeywordChanged.InvokeAsync(value);
             }
         }
     }
 
+    // Backing field for filter category
     private string _filterCategory;
+
+    // Filter category property with two-way binding and change notification
     [Parameter]
     public string FilterCategory
     {
@@ -37,13 +46,17 @@
             if (_filterCategory != value)
             {
                 _filterCategory = value;
+                // Notify parent component when filter category changes
                 FilterCategoryChanged.InvokeAsync(value);
             }
         }
     }
 
+    // Event callback for search keyword change
     [Parameter] public EventCallback<string> SearchKeywordChanged { get; set; }
+    // Event callback for filter category change
     [Parameter] public EventCallback<string> FilterCategoryChanged { get; set; }
 
+    // List of available categories for filtering
     [Parameter] public List<string> Categories { get; set; } = new();
 }

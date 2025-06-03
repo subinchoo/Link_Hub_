@@ -10,13 +10,17 @@ using Microsoft.Extensions.Hosting;
 using LinkHub.Data;
 using System.IO;
 
+// Create a new WebApplication builder
 var builder = WebApplication.CreateBuilder(args);
 
-/// ✅ 명확한 SQLite DB 경로 지정
+/// ✅ Specify the SQLite DB path explicitly
 var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "app.db");
+
+// Register ApplicationDbContext with SQLite provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configure ASP.NET Core Identity with custom password options
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -28,20 +32,23 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Add Razor Pages and Blazor Server services
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+// Build the app
 var app = builder.Build();
 
+// Configure the HTTP request pipeline
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthentication(); // ✅ 인증 미들웨어
-app.UseAuthorization();  // ✅ 권한 미들웨어
+app.UseAuthentication(); // ✅ Authentication middleware
+app.UseAuthorization();  // ✅ Authorization middleware
 
-app.MapRazorPages(); // ✅ Identity UI 라우팅
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapRazorPages(); // ✅ Map Razor Pages for Identity UI
+app.MapBlazorHub();  // Map Blazor Server SignalR hub
+app.MapFallbackToPage("/_Host"); // Fallback to Blazor host page
 
 app.Run();
