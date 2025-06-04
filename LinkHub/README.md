@@ -8,27 +8,35 @@ LinkHub Bookmark is a Blazor Server web application for managing personal bookma
 - Add, edit, and delete bookmarks
 - Organize bookmarks by custom categories
 - Search and filter bookmarks by title and category
-- SQLite database for persistent storage (ongoing...)
+- using PostgreSQL Database - check through TablePlus
 
 ## Tech Stack
 
 - ASP.NET Core Blazor Server
 - ASP.NET Core Identity (authentication & authorization)
-- Entity Framework Core with SQLite
+- PostgreSQL Database - check through TablePlus
 
 ## Getting Started
 
 1. **Install dependencies:**
    - [.NET 8 SDK or later](https://dotnet.microsoft.com/download)
-2. **Apply database migrations:**
+2. **Go to the LinkHub folder**
+   ```sh
+   cd LinkHub
+   ```
+3. **restore the dotnet**
+   ```sh
+   dotnet restore
+   ```
+4. **Apply database migrations:**
    ```sh
    dotnet ef database update
    ```
-3. **Run the app:**
+5. **Run the app:**
    ```sh
    dotnet run
    ```
-4. Open your browser at [https://localhost:****] (the URL shown in the terminal).
+6. Open your browser at [https://localhost:****] (the URL shown in the terminal).
 
 ## Project Structure
 
