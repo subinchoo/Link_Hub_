@@ -20,6 +20,18 @@ LinkHub Bookmark is a Blazor Server web application for managing personal bookma
 
 1. **Install dependencies:**
    - [.NET 8 SDK or later](https://dotnet.microsoft.com/download)
+1.2 - **Install PostgreSQL**
+   Download from: https://www.postgresql.org/download/
+   Mac: Use Postgres.app or Homebrew
+   Windows: Use the official installer
+   Make sure PostgreSQL is running and note:
+   
+   ✅ Port (default is 5432)
+   ✅ Username (e.g. postgres)
+   ✅ Password
+   ✅ Database name (e.g. LinkHubDb)
+
+
 2. **Go to the LinkHub folder**
    ```sh
    cd LinkHub
