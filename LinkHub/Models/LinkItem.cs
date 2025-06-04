@@ -1,9 +1,12 @@
 // LinkItem.cs
 // Represents a bookmark or link item in the application
-namespace LinkHubApp.Models
+namespace LinkHub.Models
 {
     public class LinkItem
     {
+        // Primary Key
+        public int Id { get; set; } 
+
         // The title or name of the bookmark
         public string Title { get; set; }
         // The URL of the bookmark

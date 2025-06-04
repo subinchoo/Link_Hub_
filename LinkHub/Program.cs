@@ -13,12 +13,9 @@ using System.IO;
 // Create a new WebApplication builder
 var builder = WebApplication.CreateBuilder(args);
 
-/// ✅ Specify the SQLite DB path explicitly
-var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "app.db");
-
-// Register ApplicationDbContext with SQLite provider
+// Register ApplicationDbContext with PostgreSQL provider
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure ASP.NET Core Identity with custom password options
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
@@ -44,10 +41,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthentication(); // ✅ Authentication middleware
-app.UseAuthorization();  // ✅ Authorization middleware
+app.UseAuthentication(); // Enable authentication middleware
+app.UseAuthorization();  // Enable authorization middleware
 
-app.MapRazorPages(); // ✅ Map Razor Pages for Identity UI
+app.MapRazorPages(); // Map Razor Pages for Identity UI
 app.MapBlazorHub();  // Map Blazor Server SignalR hub
 app.MapFallbackToPage("/_Host"); // Fallback to Blazor host page
 

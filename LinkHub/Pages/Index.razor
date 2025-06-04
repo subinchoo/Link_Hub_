@@ -1,6 +1,9 @@
 ﻿@page "/"
-@using LinkHubApp.Models
+@using LinkHub.Models
 @inject AuthenticationStateProvider AuthStateProvider
+@using LinkHub.Data
+@inject ApplicationDbContext DbContext
+@using Microsoft.EntityFrameworkCore
 
 <!--
     Glance Bookmark main page
@@ -47,7 +50,7 @@
     OnDelete=@(link => RemoveLink(link)) />
 
 @code {
-    // List of all bookmarks
+    // List of all bookmarks for the current user
     List<LinkItem> links = new();
 
     // Input form binding variables
@@ -63,41 +66,55 @@
     // Current logged-in user ID
     string currentUserId = "anonymous";
 
-    // On page initialization: get logged-in user info
+    // On page initialization: get logged-in user info & load user's saved links
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
+        // If user is authenticated, set currentUserId
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
             currentUserId = user.Identity.Name;
         }
+
+        // Load bookmarks for the current user from the database
+        links = await DbContext.LinkItems
+            .Where(l => l.UserId == currentUserId)
+            .ToListAsync();
     }
 
     // Initial category list
     List<string> categories = new() { "Development", "Design", "General", "IT School", "Recruitment", "Other" };
 
-    // Add a new bookmark
-    void AddLink()
+    // Add a new bookmark and save to database
+    async Task AddLink()
     {
-        Console.WriteLine($"🔽 AddLink() called by: {currentUserId}");
+        Console.WriteLine($"AddLink() called by: {currentUserId}");
 
+        // Only add if title and URL are not empty
         if (!string.IsNullOrWhiteSpace(newTitle) && !string.IsNullOrWhiteSpace(newUrl))
         {
-            links.Add(new LinkItem { Title = newTitle, Url = newUrl, 
-            Category = selectedCategory,
-            UserId = currentUserId });
+            var link = new LinkItem
+            {
+                Title = newTitle,
+                Url = newUrl,
+                Category = selectedCategory,
+                UserId = currentUserId
+            };
 
-            // Reset input fields
+            // Save to database
+            DbContext.LinkItems.Add(link);
+            await DbContext.SaveChangesAsync();
+
+            // Add to in-memory list and clear input fields
+            links.Add(link);
             newTitle = "";
             newUrl = "";
-
-            StateHasChanged();
         }
     }
 
-    // Add a new category
+    // Add a new category to the list
     void AddCategory()
     {
         if (!string.IsNullOrWhiteSpace(newCategory) && !categories.Contains(newCategory))
@@ -107,9 +124,11 @@
         }
     }
 
-    // Remove a bookmark
-    void RemoveLink(LinkItem link)
+    // Remove a bookmark (from list and DB)
+    async Task RemoveLink(LinkItem link)
     {
         links.Remove(link);
+        DbContext.LinkItems.Remove(link);
+        await DbContext.SaveChangesAsync();
     }
 }
