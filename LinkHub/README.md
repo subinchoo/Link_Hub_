@@ -16,6 +16,10 @@ LinkHub Bookmark is a Blazor Server web application for managing personal bookma
 - ASP.NET Core Identity (authentication & authorization)
 - PostgreSQL Database - check through TablePlus
 
+## Live code
+
+https://blazor-subinchoo-app-f9gwh8egbchvddg8.australiaeast-01.azurewebsites.net/ 
+
 ## Getting Started
 
 1. **Install dependencies:**
